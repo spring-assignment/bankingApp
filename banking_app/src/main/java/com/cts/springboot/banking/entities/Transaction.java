@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,9 +21,14 @@ public class Transaction {
 
     private String accountNumber;
 
+    private String toAccountNumber;
+
     private BigDecimal transactionAmount;
 
-    private Timestamp transactionDateTime;
+    private LocalDate transactionDate;
 
 
+    public Transaction(LocalDate transactionDate) {
+        this.transactionDate = transactionDate;
+    }
 }
