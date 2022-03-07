@@ -13,8 +13,6 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,13 +25,8 @@ public class Account {
     @Column
     private long accountId;
 
-   // @Pattern(regexp = "[1-9][0-9]{9}")
-   /* @JsonFormat(pattern = "(^$|[0-9]{10})")
-    //@Pattern(regexp = "\"[1-9][0-9]{9}")*/
     @Pattern(regexp="\\d{10}")
     @Size(min=10,max=10, message = "It should consist of 10 digits")
-   //@Digits(integer=10, fraction=0)
-    //@Valid()
     @Column
     private String accountNumber;
 
@@ -44,8 +37,6 @@ public class Account {
     @Column
     @JsonFormat(pattern="dd/MM/yyyy")
     private Date dateOfBirth;
-    //LocalDate date = LocalDate.now();
-   // Period period = Period.between(dateOfBirth, date);
 
     @Column
     private String accountType;
@@ -53,12 +44,16 @@ public class Account {
     @Column
     private String accountStatus;
 
-    //@JsonFormat(shape = JsonFormat.Shape.STRING)
     @Column
     private BigDecimal accountBalance;
 
-   public void setAccountNumber(String accountNumber){
-       //String pattern = "[1-9][0-9]{9}";
+    public Account(long accountId, @Pattern(regexp = "\\d{10}") @Size(min = 10, max = 10, message = "It should consist of 10 digits") String accountNumber, BigDecimal accountBalance) {
+        this.accountId = accountId;
+        this.accountNumber = accountNumber;
+        this.accountBalance = accountBalance;
+    }
+
+    public void setAccountNumber(String accountNumber){
        final String PATTERN = "\\d{10}";
 
        if(accountNumber.matches(PATTERN)){
@@ -68,12 +63,12 @@ public class Account {
        }
 
     }
+
     public void setDateOfBirth(Date dateOfBirth) {
         LocalDate dateValue = dateOfBirth.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
         LocalDate date = LocalDate.now();
-        //Period period = Period.between(dateValue, date);
         long days = ChronoUnit.YEARS.between(dateValue, date);
 
         if(days>=18 && days<=60){
