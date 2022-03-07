@@ -4,7 +4,6 @@ import com.cts.springboot.banking.controller.request.AccountStatementRequest;
 import com.cts.springboot.banking.controller.request.TransferBalanceRequest;
 import com.cts.springboot.banking.controller.response.Response;
 import com.cts.springboot.banking.entities.Account;
-import com.cts.springboot.banking.entities.Transaction;
 import com.cts.springboot.banking.exception.AccountNotFoundException;
 import com.cts.springboot.banking.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class AccountController {
     public AccountController(AccountService theAccountService) {
         accountService = theAccountService;
     }
-
 
     @GetMapping("/accounts")
     public List<Account> getAllAccounts() {
@@ -85,22 +83,19 @@ public class AccountController {
         );
     }
 
-
     @RequestMapping("/statement/created")
-    public Response getAccountsTransactionsBetweenToAndFromDate(@RequestParam String accountNumber, @RequestParam String value, @RequestParam String value1, @RequestBody AccountStatementRequest accountStatementRequest) {
-
-        Transaction t = new Transaction(LocalDate.now());
+    public Response getAccountTransactionsBetweenToAndFromDate(@RequestParam String accountNumber, @RequestParam String fromDate, @RequestParam String toDate, @RequestBody AccountStatementRequest accountStatementRequest) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate date = LocalDate.parse(value, formatter);
-        LocalDate date1 = LocalDate.parse(value1, formatter);
+        LocalDate fromLocalDate = LocalDate.parse(fromDate, formatter);
+        LocalDate toLocalDate = LocalDate.parse(toDate, formatter);
 
-        boolean isDate = (date.isEqual(t.getTransactionDate()) && date1.isEqual(t.getTransactionDate()));
-        long period = ChronoUnit.DAYS.between(date, date1);
+        boolean isDate = (fromLocalDate.isBefore(toLocalDate) || fromLocalDate.isEqual(toLocalDate));
+        long period = ChronoUnit.DAYS.between(fromLocalDate, toLocalDate);
 
-        if (isDate && period == 0) {
+        if (isDate && period < 60) {
             return Response.ok().setPayload(
-                    accountService.getStatement(accountStatementRequest.getAccountNumber()));
+                    accountService.getStatementByDate(accountStatementRequest.getAccountNumber(), fromDate, toDate));
         }
         return Response.badRequest();
 
