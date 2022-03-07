@@ -10,9 +10,9 @@ import com.cts.springboot.banking.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,8 +87,6 @@ public class AccountServiceImpl implements AccountService {
 
         }
         return null;
-
-
     }
 
     @Override
@@ -98,8 +96,14 @@ public class AccountServiceImpl implements AccountService {
         return new AccountStatement(account.getAccountBalance(), transactionRepository.findByAccountNumber(accountNumber));
     }
 
+    @Override
+    public AccountStatement getStatementByDate(String accountNumber, String fromDate, String toDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate fromLocalDate = LocalDate.parse(fromDate, formatter);
+        LocalDate toLocalDate = LocalDate.parse(toDate, formatter);
+        Account account = accountRepository.findByAccountNumber(accountNumber);
+
+        return new AccountStatement(account.getAccountBalance(), transactionRepository.findByAccountNumberByDate(accountNumber, fromLocalDate, toLocalDate));
+    }
+
 }
-
-
-
-
