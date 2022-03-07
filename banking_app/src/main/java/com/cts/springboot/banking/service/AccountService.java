@@ -9,16 +9,19 @@ import java.util.List;
 
 public interface AccountService {
 
-    public List<Account> findAll();
+    List<Account> findAll();
 
-    public Account findById(long theId);
+    Account findById(long theId);
 
-    public Account save(Account account);
+    Account save(Account account);
 
-    public void deleteById(long theId);
+    void deleteById(long theId);
 
     Transaction sendMoney(TransferBalanceRequest transferBalanceRequest);
 
     AccountStatement getStatement(String accountNumber);
 
+    AccountStatement getStatementByDate(String accountNumber, String fromDate, String toDate);
+
 }
+
