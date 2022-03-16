@@ -7,6 +7,7 @@ import com.cts.springboot.banking.entities.Account;
 import com.cts.springboot.banking.exception.AccountNotFoundException;
 import com.cts.springboot.banking.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api")
 public class AccountController {
@@ -27,6 +27,14 @@ public class AccountController {
     @Autowired
     public AccountController(AccountService theAccountService) {
         accountService = theAccountService;
+    }
+
+    @Value("${app.message}")
+    private String message;
+
+    @GetMapping("/welcome")
+    public String getDataBaseConfig() {
+        return message;
     }
 
     @GetMapping("/accounts")
@@ -101,3 +109,4 @@ public class AccountController {
 
     }
 }
+
