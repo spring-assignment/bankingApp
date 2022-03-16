@@ -1,23 +1,26 @@
 package com.cts.springboot.banking.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="account")
+@Table(name = "account")
 public class Account {
 
     @Id
@@ -25,24 +28,37 @@ public class Account {
     @Column
     private long accountId;
 
-    @Pattern(regexp="\\d{10}")
-    @Size(min=10,max=10, message = "It should consist of 10 digits")
+    @Pattern(regexp = "\\d{10}")
+    @Size(min = 10, max = 10, message = "It should consist of 10 digits")
     @Column
     private String accountNumber;
 
     @Column
-    private int panId;
+    private String customerName;
+
+    @Column
+    private String panId;
+
+    @Column
+    private String phoneNumber;
 
     @NotNull
     @Column
-    @JsonFormat(pattern="dd/MM/yyyy")
-    private Date dateOfBirth;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private LocalDate dateOfBirth;
 
     @Column
     private String accountType;
 
     @Column
     private String accountStatus;
+
+    @Column
+    @NotNull
+    @NotBlank(message = "Please enter your EmailId")
+    private String emailId;
 
     @Column
     private BigDecimal accountBalance;
@@ -53,27 +69,35 @@ public class Account {
         this.accountBalance = accountBalance;
     }
 
-    public void setAccountNumber(String accountNumber){
-       final String PATTERN = "\\d{10}";
+    public Account(long accountId, @Pattern(regexp = "\\d{10}") @Size(min = 10, max = 10, message = "It should consist of 10 digits") String accountNumber, String panId, LocalDate dateOfBirth, String accountType, String accountStatus, BigDecimal accountBalance) {
+        this.accountId = accountId;
+        this.accountNumber = accountNumber;
+        this.panId = panId;
+        this.dateOfBirth = dateOfBirth;
+        this.accountType = accountType;
+        this.accountStatus = accountStatus;
+        this.accountBalance = accountBalance;
+    }
 
-       if(accountNumber.matches(PATTERN)){
-           this.accountNumber = accountNumber;
-       } else {
-           System.out.println("The value should consist of 10 digits");
-       }
+    public void setAccountNumber(String accountNumber) {
+        final String PATTERN = "\\d{10}";
+
+        if (accountNumber.matches(PATTERN)) {
+            this.accountNumber = accountNumber;
+        } else {
+            System.out.println("The value should consist of 10 digits");
+        }
 
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
-        LocalDate dateValue = dateOfBirth.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        LocalDate date = LocalDate.now();
-        long days = ChronoUnit.YEARS.between(dateValue, date);
+    public void setDateOfBirth(LocalDate dateOfBirth) {
 
-        if(days>=18 && days<=60){
+        LocalDate date = LocalDate.now();
+        long days = ChronoUnit.YEARS.between(dateOfBirth, date);
+
+        if (days >= 18 && days <= 60) {
             this.dateOfBirth = dateOfBirth;
-        } else{
+        } else {
             System.out.println("The person is not eligible to open the account");
         }
     }
