@@ -20,15 +20,15 @@ import java.util.Optional;
 @Service
 public class AccountServiceImpl implements AccountService {
 
+    @Autowired
     private AccountRepository accountRepository;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository theAccountRepository) {
-        accountRepository = theAccountRepository;
-    }
-
-    @Autowired
     private TransactionRepository transactionRepository;
+
+    public AccountServiceImpl() {
+
+    }
 
     @Override
     public List<Account> findAll() {
