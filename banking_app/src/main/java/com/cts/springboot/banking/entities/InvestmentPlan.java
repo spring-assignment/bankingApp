@@ -25,5 +25,11 @@ public class InvestmentPlan {
 
     @Column
     private String planDescription;
+    
+    @Column
+    private Long accountId;
+    
+    @OneToOne(targetEntity = Account.class, cascade = CascadeType.ALL)
+    private Account account;
 
 }
