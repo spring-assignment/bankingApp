@@ -17,15 +17,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -45,8 +42,8 @@ public class AccountControllerTest {
     @Test
     public void listAllAccounts_whenGetMethod() throws Exception {
 
-        Account account1 = new Account(1L, "1873645026", 129809004, new Date(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
-        Account account2 = new Account(2L, "1873645027", 129809005, new Date(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(55000));
+        Account account1 = new Account(1L, "1873645026", "129809004", LocalDate.of(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
+        Account account2 = new Account(2L, "1873645027", "129809005", LocalDate.of(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(55000));
 
         List<Account> allAccounts = Arrays.asList(account1, account2);
 
@@ -66,13 +63,12 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$[1].accountType", is(account2.getAccountType())));
     }
 
-
     @Test
     public void listAllAccount_whenGetMethod() throws Exception {
 
         List<Account> accountList = Arrays.asList(
-                new Account(1L, "1873645026", 129809004, new Date(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000)),
-                new Account(2L, "1873645027", 129809005, new Date(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(55000))
+                new Account(1L, "1873645026", "129809004", LocalDate.of(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000)),
+                new Account(2L, "1873645027", "129809005", LocalDate.of(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(55000))
         );
 
         when(accountService.findAll()).thenReturn(accountList);
@@ -85,7 +81,7 @@ public class AccountControllerTest {
 
     @Test
     public void getSpecificAccount_GetMethod() throws Exception {
-        Account account = new Account(1L, "1873645026", 129809004, new Date(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
+        Account account = new Account(1L, "1873645026", "129809004", LocalDate.of(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
 
         given(accountService.findById(account.getAccountId()))
                 .willReturn(account);
@@ -104,11 +100,8 @@ public class AccountControllerTest {
 
     @Test
     public void save_account_success() throws Exception {
-        LocalDate date = LocalDate.of(1970, 8, 15);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String text = date.format(formatter);
-        LocalDate parsedDate = LocalDate.parse(text, formatter);
-        Account account = new Account(1L, "1873645026", 129809004, new Date(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
+
+        Account account = new Account(1L, "1873645026", "129809004", LocalDate.of(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
 
         given(accountService.save(account))
                 .willReturn(account);
@@ -132,8 +125,8 @@ public class AccountControllerTest {
 
     @Test
     public void should_throw_exception_when_account_doesnt_exist() throws Exception {
-        Account account = new Account(1L, "1873645026", 129809004, new Date(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
 
+        Account account = new Account(1L, "1873645026", "129809004", LocalDate.of(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
 
         Mockito.doThrow(new AccountNotFoundException("Account not found" + account.getAccountId())).when(accountService).save(account);
         ObjectMapper mapper = new ObjectMapper();
@@ -147,7 +140,7 @@ public class AccountControllerTest {
     @Test
     public void updateAccount_whenPutUser() throws Exception {
 
-        Account account = new Account(1L, "1873645026", 129809004, new Date(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
+        Account account = new Account(1L, "1873645026", "129809004", LocalDate.of(1970, 8, 15), "Non-Account", "Active", BigDecimal.valueOf(45000));
 
         given(accountService.save(account))
                 .willReturn(account);
