@@ -77,8 +77,10 @@ public class AccountController {
     @RequestMapping("/sendMoney")
     public Response sendMoney(@RequestBody TransferBalanceRequest transferBalanceRequest) {
         if (transferBalanceRequest.getAmount().compareTo(BigDecimal.ZERO) == -1) {
+            System.out.println(Thread.currentThread().getName());
             return Response.badRequest();
         }
+        System.out.println(Thread.currentThread().getName());
         return Response.ok().setPayload(
                 accountService.sendMoney(transferBalanceRequest)
         );
