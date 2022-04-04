@@ -62,6 +62,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Async
     public Transaction sendMoney(TransferBalanceRequest transferBalanceRequest) {
 
         String fromAccountNumber = transferBalanceRequest.getFromAccountNumber();
