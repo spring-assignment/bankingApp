@@ -6,6 +6,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
 @EnableEurekaClient
+@EnableAsync
 public class BankingAppApplication {
 
 	public static void main(String[] args) {
